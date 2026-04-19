@@ -866,9 +866,24 @@ footer {
 <script>
 /* ── Hero word reveal ── */
 const words = document.querySelectorAll('.tw');
+const fireWord = document.querySelector('.fire-word');
 words.forEach((w, i) => {
   setTimeout(() => w.classList.add('revealed'), 620 + i * 110);
 });
+
+// After all words revealed — single slow pulse orange then back to outline
+const totalReveal = 620 + (words.length - 1) * 110 + 900;
+setTimeout(() => {
+  if(!fireWord) return;
+  fireWord.style.transition = 'color .5s ease, -webkit-text-stroke .5s ease';
+  fireWord.style.color = '#FF4520';
+  fireWord.style.webkitTextStroke = '0px transparent';
+  setTimeout(() => {
+    fireWord.style.transition = 'color .8s ease, -webkit-text-stroke .8s ease';
+    fireWord.style.color = 'transparent';
+    fireWord.style.webkitTextStroke = '1px rgba(240,236,228,.2)';
+  }, 700);
+}, totalReveal);
 
 /* ── Cursor ── */
 const curEl = document.getElementById('cursor');
@@ -1107,6 +1122,8 @@ drawCanvas();
   });
 })();
 
+
+window.addEventListener("load", () => window.scrollTo(0, 0));
 </script>
 </body>
 </html>
