@@ -130,6 +130,13 @@ body::after {
   padding: 0 48px 80px;
   position: relative; overflow: hidden;
 }
+#hero::after {
+  content: '';
+  position: absolute; bottom: 12%; left: 6%;
+  width: 560px; height: 220px;
+  background: radial-gradient(ellipse, rgba(255,69,32,.09) 0%, transparent 65%);
+  pointer-events: none; z-index: 0;
+}
 
 /* Canvas for particle/grid bg */
 #hero-canvas {
@@ -456,7 +463,7 @@ body::after {
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   width: 500px; height: 300px;
-  background: radial-gradient(ellipse, rgba(255,69,32,.08) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(255,69,32,.13) 0%, transparent 70%);
   pointer-events: none;
   animation: glowPulse 3s ease-in-out infinite;
 }
@@ -969,7 +976,7 @@ function drawCanvas() {
     ctx.beginPath();
     ctx.arc(px, py, d.r, 0, Math.PI*2);
     ctx.fillStyle = d.fire
-      ? `rgba(255,69,32,${d.a * (.6 + .4*Math.sin(t*2 + d.bx))})`
+      ? `rgba(255,69,32,${d.a * (.7 + .3*Math.sin(t*2 + d.bx))})`
       : `rgba(240,236,228,${d.a * (.5 + .5*Math.sin(t + d.by * .05))})`;
     ctx.fill();
   });
@@ -991,30 +998,42 @@ drawCanvas();
   const gctx   = gc.getContext('2d');
 
   // Exact F proportions: 10 cols × 15 rows (viewBox 120×180, cell=12)
-  const F_CELLS = [[0, 0, "cream"], [1, 0, "cream"], [2, 0, "cream"], [3, 0, "cream"], [4, 0, "cream"], [5, 0, "cream"], [6, 0, "cream"], [7, 0, "cream"], [8, 0, "cream"], [9, 0, "cream"], [0, 1, "cream"], [1, 1, "cream"], [2, 1, "cream"], [3, 1, "cream"], [4, 1, "cream"], [5, 1, "cream"], [6, 1, "cream"], [7, 1, "cream"], [8, 1, "cream"], [9, 1, "cream"], [0, 2, "cream"], [1, 2, "cream"], [0, 3, "cream"], [1, 3, "cream"], [0, 4, "cream"], [1, 4, "cream"], [0, 5, "cream"], [1, 5, "cream"], [0, 6, "cream"], [1, 6, "cream"], [2, 6, "fire"], [3, 6, "fire"], [4, 6, "fire"], [5, 6, "fire"], [6, 6, "fire"], [7, 6, "fire"], [0, 7, "cream"], [1, 7, "cream"], [0, 8, "cream"], [1, 8, "cream"], [0, 9, "cream"], [1, 9, "cream"], [0, 10, "cream"], [1, 10, "cream"], [0, 11, "cream"], [1, 11, "cream"], [0, 12, "cream"], [1, 12, "cream"], [0, 13, "cream"], [1, 13, "cream"], [0, 14, "cream"], [1, 14, "cream"]];
-  const F_COLS = 10, F_ROWS = 15;
+  const F_CELLS = [[0, 0, "cream"], [1, 0, "cream"], [2, 0, "cream"], [3, 0, "cream"], [4, 0, "cream"], [5, 0, "cream"], [6, 0, "cream"], [7, 0, "cream"], [8, 0, "cream"], [9, 0, "cream"], [10, 0, "cream"], [11, 0, "cream"], [12, 0, "cream"], [13, 0, "cream"], [14, 0, "cream"], [15, 0, "cream"], [16, 0, "cream"], [17, 0, "cream"], [18, 0, "cream"], [19, 0, "cream"], [0, 1, "cream"], [1, 1, "cream"], [2, 1, "cream"], [3, 1, "cream"], [4, 1, "cream"], [5, 1, "cream"], [6, 1, "cream"], [7, 1, "cream"], [8, 1, "cream"], [9, 1, "cream"], [10, 1, "cream"], [11, 1, "cream"], [12, 1, "cream"], [13, 1, "cream"], [14, 1, "cream"], [15, 1, "cream"], [16, 1, "cream"], [17, 1, "cream"], [18, 1, "cream"], [19, 1, "cream"], [0, 2, "cream"], [1, 2, "cream"], [2, 2, "cream"], [3, 2, "cream"], [4, 2, "cream"], [5, 2, "cream"], [6, 2, "cream"], [7, 2, "cream"], [8, 2, "cream"], [9, 2, "cream"], [10, 2, "cream"], [11, 2, "cream"], [12, 2, "cream"], [13, 2, "cream"], [14, 2, "cream"], [15, 2, "cream"], [16, 2, "cream"], [17, 2, "cream"], [18, 2, "cream"], [19, 2, "cream"], [0, 3, "cream"], [1, 3, "cream"], [2, 3, "cream"], [3, 3, "cream"], [4, 3, "cream"], [5, 3, "cream"], [6, 3, "cream"], [7, 3, "cream"], [8, 3, "cream"], [9, 3, "cream"], [10, 3, "cream"], [11, 3, "cream"], [12, 3, "cream"], [13, 3, "cream"], [14, 3, "cream"], [15, 3, "cream"], [16, 3, "cream"], [17, 3, "cream"], [18, 3, "cream"], [19, 3, "cream"], [0, 4, "cream"], [1, 4, "cream"], [2, 4, "cream"], [3, 4, "cream"], [0, 5, "cream"], [1, 5, "cream"], [2, 5, "cream"], [3, 5, "cream"], [0, 6, "cream"], [1, 6, "cream"], [2, 6, "cream"], [3, 6, "cream"], [0, 7, "cream"], [1, 7, "cream"], [2, 7, "cream"], [3, 7, "cream"], [0, 8, "cream"], [1, 8, "cream"], [2, 8, "cream"], [3, 8, "cream"], [0, 9, "cream"], [1, 9, "cream"], [2, 9, "cream"], [3, 9, "cream"], [0, 10, "cream"], [1, 10, "cream"], [2, 10, "cream"], [3, 10, "cream"], [0, 11, "cream"], [1, 11, "cream"], [2, 11, "cream"], [3, 11, "cream"], [0, 12, "fire"], [1, 12, "fire"], [2, 12, "fire"], [3, 12, "fire"], [4, 12, "fire"], [5, 12, "fire"], [6, 12, "fire"], [7, 12, "fire"], [8, 12, "fire"], [9, 12, "fire"], [10, 12, "fire"], [11, 12, "fire"], [12, 12, "fire"], [13, 12, "fire"], [14, 12, "fire"], [0, 13, "fire"], [1, 13, "fire"], [2, 13, "fire"], [3, 13, "fire"], [4, 13, "fire"], [5, 13, "fire"], [6, 13, "fire"], [7, 13, "fire"], [8, 13, "fire"], [9, 13, "fire"], [10, 13, "fire"], [11, 13, "fire"], [12, 13, "fire"], [13, 13, "fire"], [14, 13, "fire"], [0, 14, "fire"], [1, 14, "fire"], [2, 14, "fire"], [3, 14, "fire"], [4, 14, "fire"], [5, 14, "fire"], [6, 14, "fire"], [7, 14, "fire"], [8, 14, "fire"], [9, 14, "fire"], [10, 14, "fire"], [11, 14, "fire"], [12, 14, "fire"], [13, 14, "fire"], [14, 14, "fire"], [0, 15, "cream"], [1, 15, "cream"], [2, 15, "cream"], [3, 15, "cream"], [0, 16, "cream"], [1, 16, "cream"], [2, 16, "cream"], [3, 16, "cream"], [0, 17, "cream"], [1, 17, "cream"], [2, 17, "cream"], [3, 17, "cream"], [0, 18, "cream"], [1, 18, "cream"], [2, 18, "cream"], [3, 18, "cream"], [0, 19, "cream"], [1, 19, "cream"], [2, 19, "cream"], [3, 19, "cream"], [0, 20, "cream"], [1, 20, "cream"], [2, 20, "cream"], [3, 20, "cream"], [0, 21, "cream"], [1, 21, "cream"], [2, 21, "cream"], [3, 21, "cream"], [0, 22, "cream"], [1, 22, "cream"], [2, 22, "cream"], [3, 22, "cream"], [0, 23, "cream"], [1, 23, "cream"], [2, 23, "cream"], [3, 23, "cream"], [0, 24, "cream"], [1, 24, "cream"], [2, 24, "cream"], [3, 24, "cream"], [0, 25, "cream"], [1, 25, "cream"], [2, 25, "cream"], [3, 25, "cream"], [0, 26, "cream"], [1, 26, "cream"], [2, 26, "cream"], [3, 26, "cream"], [0, 27, "cream"], [1, 27, "cream"], [2, 27, "cream"], [3, 27, "cream"], [0, 28, "cream"], [1, 28, "cream"], [2, 28, "cream"], [3, 28, "cream"], [0, 29, "cream"], [1, 29, "cream"], [2, 29, "cream"], [3, 29, "cream"]];
+  const F_COLS = 20, F_ROWS = 30;
 
   let W, H, CELL;
   let cellAlpha = {};  // key -> 0..1
   let active = false;
   let timers = [];
 
+  let CELL_W = 70, CELL_H = 70; // separate x/y cell sizes for pixel-perfect fit
+
   function resize(){
     W = gc.width  = heroEl.offsetWidth;
     H = gc.height = heroEl.offsetHeight;
-    // Cell size: fit F (10×15) into ~40% of the smaller dimension
-    CELL = Math.floor(Math.min(W * 0.18, H * 0.22) / Math.max(F_COLS, F_ROWS));
-    CELL = Math.max(CELL, 10); // min 10px
+    const bgMark = document.querySelector('.hero-bg-mark svg');
+    if(bgMark) {
+      const r = bgMark.getBoundingClientRect();
+      CELL_W = r.width  / F_COLS;
+      CELL_H = r.height / F_ROWS;
+      CELL   = CELL_W; // keep CELL for legacy refs
+    } else {
+      CELL_W = CELL_H = CELL = Math.floor(Math.min(W * 0.18, H * 0.22) / Math.max(F_COLS, F_ROWS));
+    }
   }
   resize();
   window.addEventListener('resize', resize);
 
   function getOrigin(){
-    // Centre F on canvas
-    const fW = F_COLS * CELL, fH = F_ROWS * CELL;
+    const bgSvg = document.querySelector('.hero-bg-mark svg');
+    if(!bgSvg) {
+      return { ox: Math.round((W - F_COLS*CELL_W) / 2), oy: Math.round((H - F_ROWS*CELL_H) / 2) };
+    }
+    const heroRect = heroEl.getBoundingClientRect();
+    const svgRect  = bgSvg.getBoundingClientRect();
     return {
-      ox: Math.round((W - fW) / 2),
-      oy: Math.round((H - fH) / 2)
+      ox: svgRect.left - heroRect.left,
+      oy: svgRect.top  - heroRect.top
     };
   }
 
@@ -1026,8 +1045,8 @@ drawCanvas();
       const a = cellAlpha[c + '_' + r] || 0;
       if(a <= 0.01) return;
 
-      const x = ox + c * CELL;
-      const y = oy + r * CELL;
+      const x = ox + c * CELL_W;
+      const y = oy + r * CELL_H;
       const gap = 2;
 
       gctx.save();
@@ -1040,7 +1059,7 @@ drawCanvas();
 
       gctx.globalAlpha = a;
       gctx.fillStyle   = col === 'fire' ? '#FF4520' : '#f0ece4';
-      gctx.fillRect(x + gap, y + gap, CELL - gap*2, CELL - gap*2);
+      gctx.fillRect(x + gap, y + gap, CELL_W - gap*2, CELL_H - gap*2);
       gctx.restore();
     });
   }
