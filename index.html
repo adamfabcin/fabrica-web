@@ -606,6 +606,21 @@ footer {
   #clients { padding-left: 24px; padding-right: 24px; }
 }
 
+
+
+/* ── Easter egg: F grid ── */
+#hero-grid-canvas {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+}
+#hero-click-zone {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  /* covers top 55% of hero — above the text block */
+  height: 55%;
+  z-index: 3;
+  cursor: none;
+}
+
 </style>
 </head>
 <body>
@@ -635,7 +650,9 @@ footer {
 
 <!-- HERO -->
 <section id="hero">
+  <div id="hero-click-zone"></div>
   <canvas id="hero-canvas"></canvas>
+  <canvas id="hero-grid-canvas"></canvas>
 
   <!-- Giant background F -->
   <div class="hero-bg-mark">
@@ -953,6 +970,148 @@ function drawCanvas() {
 window.addEventListener('resize', resize);
 resize();
 drawCanvas();
+
+
+
+
+/* ── Easter egg: click hero → F assembles as grid ── */
+(function(){
+  const heroEl = document.getElementById('hero');
+  const gc     = document.getElementById('hero-grid-canvas');
+  const gctx   = gc.getContext('2d');
+
+  // Exact F proportions: 10 cols × 15 rows (viewBox 120×180, cell=12)
+  const F_CELLS = [[0, 0, "cream"], [1, 0, "cream"], [2, 0, "cream"], [3, 0, "cream"], [4, 0, "cream"], [5, 0, "cream"], [6, 0, "cream"], [7, 0, "cream"], [8, 0, "cream"], [9, 0, "cream"], [0, 1, "cream"], [1, 1, "cream"], [2, 1, "cream"], [3, 1, "cream"], [4, 1, "cream"], [5, 1, "cream"], [6, 1, "cream"], [7, 1, "cream"], [8, 1, "cream"], [9, 1, "cream"], [0, 2, "cream"], [1, 2, "cream"], [0, 3, "cream"], [1, 3, "cream"], [0, 4, "cream"], [1, 4, "cream"], [0, 5, "cream"], [1, 5, "cream"], [0, 6, "cream"], [1, 6, "cream"], [2, 6, "fire"], [3, 6, "fire"], [4, 6, "fire"], [5, 6, "fire"], [6, 6, "fire"], [7, 6, "fire"], [0, 7, "cream"], [1, 7, "cream"], [0, 8, "cream"], [1, 8, "cream"], [0, 9, "cream"], [1, 9, "cream"], [0, 10, "cream"], [1, 10, "cream"], [0, 11, "cream"], [1, 11, "cream"], [0, 12, "cream"], [1, 12, "cream"], [0, 13, "cream"], [1, 13, "cream"], [0, 14, "cream"], [1, 14, "cream"]];
+  const F_COLS = 10, F_ROWS = 15;
+
+  let W, H, CELL;
+  let cellAlpha = {};  // key -> 0..1
+  let active = false;
+  let timers = [];
+
+  function resize(){
+    W = gc.width  = heroEl.offsetWidth;
+    H = gc.height = heroEl.offsetHeight;
+    // Cell size: fit F (10×15) into ~40% of the smaller dimension
+    CELL = Math.floor(Math.min(W * 0.18, H * 0.22) / Math.max(F_COLS, F_ROWS));
+    CELL = Math.max(CELL, 10); // min 10px
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function getOrigin(){
+    // Centre F on canvas
+    const fW = F_COLS * CELL, fH = F_ROWS * CELL;
+    return {
+      ox: Math.round((W - fW) / 2),
+      oy: Math.round((H - fH) / 2)
+    };
+  }
+
+  function draw(){
+    gctx.clearRect(0, 0, W, H);
+    const {ox, oy} = getOrigin();
+
+    F_CELLS.forEach(([c, r, col]) => {
+      const a = cellAlpha[c + '_' + r] || 0;
+      if(a <= 0.01) return;
+
+      const x = ox + c * CELL;
+      const y = oy + r * CELL;
+      const gap = 2;
+
+      gctx.save();
+
+      // Glow for fire cells
+      if(col === 'fire' && a > 0.5){
+        gctx.shadowColor = '#FF4520';
+        gctx.shadowBlur  = CELL * 1.2 * a;
+      }
+
+      gctx.globalAlpha = a;
+      gctx.fillStyle   = col === 'fire' ? '#FF4520' : '#f0ece4';
+      gctx.fillRect(x + gap, y + gap, CELL - gap*2, CELL - gap*2);
+      gctx.restore();
+    });
+  }
+
+  function animateCell(key, targetAlpha, duration, delay){
+    return new Promise(resolve => {
+      const t = setTimeout(() => {
+        const start     = performance.now();
+        const startVal  = cellAlpha[key] || 0;
+        const step = (now) => {
+          const p = Math.min((now - start) / duration, 1);
+          // ease out cubic
+          const e = 1 - Math.pow(1 - p, 3);
+          cellAlpha[key] = startVal + (targetAlpha - startVal) * e;
+          draw();
+          if(p < 1) requestAnimationFrame(step);
+          else resolve();
+        };
+        requestAnimationFrame(step);
+      }, delay);
+      timers.push(t);
+    });
+  }
+
+  function clearTimers(){
+    timers.forEach(clearTimeout);
+    timers = [];
+  }
+
+  function buildF(){
+    const creamCells = F_CELLS.filter(([c,r,col]) => col === 'cream');
+    const fireCells  = F_CELLS.filter(([c,r,col]) => col === 'fire');
+
+    creamCells.forEach(([c, r]) => {
+      const delay = r * 38 + c * 12;
+      animateCell(c+'_'+r, 1, 280, delay);
+    });
+
+    const fireDelay = Math.max(...creamCells.map(([c,r]) => r * 38 + c * 12)) + 60;
+    fireCells.forEach(([c, r], i) => {
+      animateCell(c+'_'+r, 1, 320, fireDelay + i * 30);
+    });
+
+    // Auto-destroy after logo is fully visible — hold 1.8s then fade out
+    const totalBuild = fireDelay + fireCells.length * 30 + 320;
+    const autoT = setTimeout(() => {
+      active = false;
+      destroyF();
+    }, totalBuild + 1800);
+    timers.push(autoT);
+  }
+
+  function destroyF(){
+    // Reverse: fire fades first, then cream bottom to top
+    const fireCells  = F_CELLS.filter(([c,r,col]) => col === 'fire');
+    const creamCells = F_CELLS.filter(([c,r,col]) => col === 'cream');
+    const maxRows    = Math.max(...creamCells.map(([c,r]) => r));
+
+    fireCells.forEach(([c, r], i) => {
+      animateCell(c+'_'+r, 0, 200, i * 20);
+    });
+
+    const afterFire = fireCells.length * 20 + 80;
+    creamCells.forEach(([c, r]) => {
+      const delay = afterFire + (maxRows - r) * 32 + c * 8;
+      animateCell(c+'_'+r, 0, 220, delay);
+    });
+  }
+
+  document.getElementById('hero-click-zone').addEventListener('click', () => {
+    clearTimers();
+    if(!active){
+      active = true;
+      buildF();
+    } else {
+      active = false;
+      destroyF();
+    }
+  });
+})();
+
 </script>
 </body>
 </html>
