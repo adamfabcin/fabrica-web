@@ -648,6 +648,7 @@ footer {
 @media(max-width: 768px) {
 
   /* NAV */
+  .nav-links { display: none; }
   .nav-cta { display: none; }
 
   /* HERO */
@@ -660,9 +661,10 @@ footer {
   .hero-scroll-line { display: none; }
   .hero-bg-mark { opacity: .018; }
 
-  /* Easter egg — disable on mobile (touch events unreliable, layout shifts) */
-  #hero-click-zone { display: none; }
-  #hero-grid-canvas { display: none; }
+  /* Easter egg — keep on mobile, full hero tap zone */
+  #hero-click-zone { height: 100%; }
+  .hero-bg-mark { opacity: .015; right: -20%; }
+  .hero-bg-mark svg { width: 260px; height: 390px; }
 
   /* TICKER */
   .ticker-item { font-size: 11px; padding: 0 24px; gap: 24px; }
@@ -713,7 +715,7 @@ footer {
 
 
 @media(max-width: 768px) {
-  #hero::after { display: none; }
+  #hero::after { width: 280px; height: 110px; bottom: 22%; left: 0; }
 }
 </style>
 </head>
