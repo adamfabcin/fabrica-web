@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FABRICA — Marketing Creative Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════ */
+:root {
+  --bg:      #080807;
+  --bg2:     #0e0e0c;
+  --ink:     #f0ece4;
+  --muted:   #3a3a38;
+  --dim:     #555550;
+  --fire:    #FF4520;
+  --fire2:   #ff6a40;
+  --border:  #161614;
+}
+
+/* ═══════════════════════════════════════
+   BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  cursor: none;
+}
+a { text-decoration: none; color: inherit; }
+
+/* ═══════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════ */
+#cursor {
+  position: fixed; z-index: 9999; pointer-events: none;
+  top: 0; left: 0;
+  mix-blend-mode: normal;
+}
+#cursor-dot {
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--fire);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform .1s ease;
+}
+#cursor-ring {
+  position: absolute;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(255,69,32,.35);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width .35s ease, height .35s ease, border-color .35s ease, transform .08s ease;
+}
+body.hovering #cursor-ring {
+  width: 56px; height: 56px;
+  border-color: rgba(255,69,32,.6);
+}
+
+/* ═══════════════════════════════════════
+   NOISE GRAIN
+═══════════════════════════════════════ */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 9998; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: .028;
+}
+
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  padding: 0 48px;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background .4s ease, border-color .4s ease;
+  border-bottom: 1px solid transparent;
+}
+#nav.scrolled {
+  background: rgba(8,8,7,.88);
+  backdrop-filter: blur(24px);
+  border-bottom-color: var(--border);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 15px; font-weight: 700; letter-spacing: .16em;
+}
+.nav-links {
+  display: flex; gap: 36px;
+}
+.nav-links a {
+  font-size: 12px; letter-spacing: .06em; color: var(--dim);
+  transition: color .25s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  font-size: 12px; letter-spacing: .08em;
+  padding: 9px 22px; border: 1px solid var(--muted);
+  color: var(--ink);
+  transition: border-color .25s, background .25s;
+}
+.nav-cta:hover { border-color: var(--fire); background: rgba(255,69,32,.06); }
+@media(max-width:700px){
+  .nav-links { display: none; }
+  #nav { padding: 0 24px; }
+}
+
+/* ═══════════════════════════════════════
+   HERO
+═══════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 48px 80px;
+  position: relative; overflow: hidden;
+}
+
+/* Canvas for particle/grid bg */
+#hero-canvas {
+  position: absolute; inset: 0; z-index: 0;
+}
+
+/* Large background F — architectural */
+.hero-bg-mark {
+  position: absolute;
+  right: -2%; top: 50%;
+  transform: translateY(-50%);
+  z-index: 1; pointer-events: none;
+  opacity: .032;
+}
+
+.hero-content {
+  position: relative; z-index: 2;
+  max-width: 980px;
+}
+
+.hero-eyebrow {
+  font-size: 11px; letter-spacing: .38em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 32px;
+  display: flex; align-items: center; gap: 14px;
+  animation: fadeUp .8s ease .4s both;
+}
+.hero-eyebrow::before {
+  content: ''; width: 28px; height: 1px; background: var(--fire); flex-shrink: 0;
+}
+
+.hero-title {
+  font-size: clamp(52px, 9vw, 120px);
+  font-weight: 900;
+  letter-spacing: -.02em;
+  line-height: .95;
+  color: var(--ink);
+  animation: fadeUp .9s cubic-bezier(.16,1,.3,1) .55s both;
+}
+.hero-title em {
+  font-style: normal;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(240,236,228,.2);
+}
+
+.hero-bottom {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-top: 56px; flex-wrap: wrap; gap: 32px;
+  animation: fadeUp .8s ease .9s both;
+}
+.hero-desc {
+  font-size: 17px; font-weight: 300; line-height: 1.7;
+  color: var(--dim); max-width: 420px;
+}
+.hero-desc span { color: var(--ink); }
+
+.hero-cta-row { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--fire); color: white;
+  padding: 14px 28px;
+  font-size: 13px; font-weight: 600; letter-spacing: .06em;
+  transition: background .25s, transform .2s;
+}
+.btn-primary:hover { background: var(--fire2); transform: translateY(-1px); }
+
+.btn-ghost {
+  font-size: 13px; color: var(--dim); letter-spacing: .06em;
+  display: flex; align-items: center; gap: 8px;
+  transition: color .25s;
+}
+.btn-ghost:hover { color: var(--ink); }
+.btn-ghost-arrow { transition: transform .25s; }
+.btn-ghost:hover .btn-ghost-arrow { transform: translateX(4px); }
+
+.hero-scroll-line {
+  position: absolute; right: 48px; bottom: 80px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  z-index: 2;
+  animation: fadeIn 1s ease 1.4s both;
+}
+.scroll-text {
+  font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--dim); writing-mode: vertical-rl;
+}
+.scroll-track {
+  width: 1px; height: 48px; background: var(--muted); overflow: hidden; position: relative;
+}
+.scroll-thumb {
+  position: absolute; top: 0; left: 0; width: 1px;
+  background: var(--fire);
+  animation: scrollDown 2s ease-in-out infinite 1.5s;
+}
+@keyframes scrollDown {
+  0%   { top: -100%; height: 40%; }
+  100% { top: 140%;  height: 40%; }
+}
+
+/* ═══════════════════════════════════════
+   TICKER
+═══════════════════════════════════════ */
+.ticker-wrap {
+  overflow: hidden; white-space: nowrap;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+  background: var(--bg2);
+}
+.ticker-inner {
+  display: inline-flex; gap: 0;
+  animation: ticker 20s linear infinite;
+}
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 40px;
+  padding: 0 40px;
+  font-size: 12px; letter-spacing: .25em; text-transform: uppercase; color: var(--dim);
+}
+.ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--fire); flex-shrink: 0; }
+@keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+
+/* ═══════════════════════════════════════
+   SERVICES
+═══════════════════════════════════════ */
+#services {
+  padding: 140px 48px;
+  max-width: 1100px; margin: 0 auto;
+}
+
+.section-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 80px; gap: 40px; flex-wrap: wrap;
+}
+.sh-left { display: flex; flex-direction: column; gap: 16px; }
+.sh-num {
+  font-size: 10px; letter-spacing: .4em; text-transform: uppercase; color: var(--dim);
+}
+.sh-title {
+  font-size: clamp(34px, 5vw, 56px); font-weight: 700;
+  letter-spacing: -.025em; line-height: 1.05;
+}
+.sh-right {
+  max-width: 340px; font-size: 15px; font-weight: 300;
+  line-height: 1.75; color: var(--dim); padding-top: 36px;
+}
+
+.services-list { display: flex; flex-direction: column; }
+.service-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+  cursor: none;
+  transition: border-color .3s;
+  position: relative; overflow: hidden;
+  gap: 24px;
+}
+.service-row:last-child { border-bottom: 1px solid var(--border); }
+.service-row::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: rgba(255,69,32,.04);
+  transition: width .4s cubic-bezier(.16,1,.3,1);
+}
+.service-row:hover::before { width: 100%; }
+.service-row:hover { border-color: var(--muted); }
+
+.srv-num { font-size: 11px; letter-spacing: .2em; color: var(--muted); width: 36px; flex-shrink: 0; }
+.srv-name {
+  font-size: clamp(22px, 3vw, 32px); font-weight: 600;
+  letter-spacing: -.01em; flex: 1;
+  transition: color .25s;
+}
+.service-row:hover .srv-name { color: var(--ink); }
+.srv-tag {
+  font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--muted); transition: color .25s;
+}
+.service-row:hover .srv-tag { color: var(--dim); }
+.srv-arrow {
+  font-size: 18px; color: var(--muted); flex-shrink: 0;
+  transform: translateX(-6px);
+  transition: transform .3s ease, color .25s;
+}
+.service-row:hover .srv-arrow { transform: translateX(0); color: var(--fire); }
+
+/* ═══════════════════════════════════════
+   WORK / PROJECTS
+═══════════════════════════════════════ */
+#work {
+  padding: 0 48px 140px;
+  max-width: 1100px; margin: 0 auto;
+}
+
+.work-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  gap: 12px;
+  margin-top: 0;
+}
+
+.work-card {
+  position: relative; overflow: hidden;
+  cursor: none;
+}
+.work-card.big { grid-column: 1 / 2; grid-row: 1 / 3; }
+.work-card.tall { aspect-ratio: .75; }
+.work-card.wide { aspect-ratio: 16/9; }
+.work-card.sq   { aspect-ratio: 1; }
+
+.wc-bg {
+  position: absolute; inset: 0;
+  transition: transform .7s cubic-bezier(.16,1,.3,1);
+}
+.work-card:hover .wc-bg { transform: scale(1.03); }
+
+.bg1 { background: linear-gradient(135deg, #131210 0%, #1e1a14 100%); }
+.bg2 { background: linear-gradient(135deg, #0f1114 0%, #1a1e22 100%); }
+.bg3 { background: linear-gradient(135deg, #120f0d 0%, #1f1510 100%); }
+.bg4 { background: linear-gradient(135deg, #0e1210 0%, #151e18 100%); }
+
+/* Abstract mark inside each card */
+.wc-mark {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: .06; pointer-events: none;
+}
+
+.wc-content {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 28px 32px;
+  background: linear-gradient(to top, rgba(8,8,7,.95) 0%, transparent 100%);
+}
+.wc-cat { font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: var(--dim); }
+.wc-title { font-size: clamp(16px, 2vw, 22px); font-weight: 600; letter-spacing: -.01em; margin-top: 6px; }
+.wc-fire-tag {
+  display: inline-block; background: var(--fire); color: white;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  padding: 3px 8px; margin-top: 8px;
+}
+
+/* ═══════════════════════════════════════
+   ABOUT / STATEMENT
+═══════════════════════════════════════ */
+#about {
+  padding: 140px 48px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+
+.about-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: start;
+}
+
+.about-left { display: flex; flex-direction: column; gap: 32px; padding-top: 8px; }
+.about-portrait {
+  width: 180px; height: 220px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.portrait-placeholder {
+  opacity: .08; pointer-events: none;
+}
+.about-name { font-size: 16px; font-weight: 600; letter-spacing: .06em; }
+.about-role { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-top: 4px; }
+
+.about-right { display: flex; flex-direction: column; gap: 40px; }
+.about-statement {
+  font-size: clamp(26px, 3.5vw, 42px);
+  font-weight: 300; line-height: 1.4; letter-spacing: -.01em;
+  color: var(--ink);
+}
+.about-statement strong { font-weight: 700; color: var(--ink); }
+.about-statement em { font-style: normal; color: var(--fire); }
+
+.about-stats {
+  display: flex; gap: 56px; flex-wrap: wrap;
+  padding-top: 32px; border-top: 1px solid var(--border);
+}
+.stat { display: flex; flex-direction: column; gap: 4px; }
+.stat-num { font-size: 40px; font-weight: 900; letter-spacing: -.02em; color: var(--ink); line-height: 1; }
+.stat-num span { color: var(--fire); }
+.stat-label { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); }
+
+@media(max-width:700px){ .about-inner { grid-template-columns: 1fr; gap: 48px; } }
+
+/* ═══════════════════════════════════════
+   PROCESS
+═══════════════════════════════════════ */
+#process {
+  padding: 140px 48px;
+  max-width: 1100px; margin: 0 auto;
+}
+
+.process-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border); margin-top: 72px;
+}
+.process-cell {
+  background: var(--bg); padding: 40px 32px;
+  display: flex; flex-direction: column; gap: 20px;
+  transition: background .3s;
+}
+.process-cell:hover { background: var(--bg2); }
+.pc-num { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--fire); }
+.pc-title { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+.pc-desc { font-size: 13px; line-height: 1.75; color: var(--dim); font-weight: 300; }
+@media(max-width:700px){ .process-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width:480px){ .process-grid { grid-template-columns: 1fr; } }
+
+/* ═══════════════════════════════════════
+   CTA FOOTER
+═══════════════════════════════════════ */
+#cta {
+  padding: 160px 48px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+
+.cta-glow {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px; height: 300px;
+  background: radial-gradient(ellipse, rgba(255,69,32,.08) 0%, transparent 70%);
+  pointer-events: none;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { opacity: .6; transform: translate(-50%,-50%) scale(1); }
+  50%      { opacity: 1; transform: translate(-50%,-50%) scale(1.1); }
+}
+
+.cta-inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+.cta-label { font-size: 11px; letter-spacing: .38em; text-transform: uppercase; color: var(--dim); margin-bottom: 28px; }
+.cta-title {
+  font-size: clamp(44px, 7vw, 88px); font-weight: 900;
+  letter-spacing: -.025em; line-height: .95; margin-bottom: 40px;
+}
+.cta-title em { font-style: normal; color: var(--fire); }
+.cta-email {
+  font-size: 18px; letter-spacing: .04em; color: var(--dim);
+  transition: color .25s;
+}
+.cta-email:hover { color: var(--fire); }
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+footer {
+  padding: 32px 48px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.foot-left { display: flex; align-items: center; gap: 12px; }
+.foot-wm { font-size: 13px; font-weight: 700; letter-spacing: .16em; }
+.foot-copy { font-size: 11px; color: var(--muted); letter-spacing: .06em; }
+.foot-links { display: flex; gap: 24px; }
+.foot-links a { font-size: 11px; color: var(--muted); letter-spacing: .08em; transition: color .2s; }
+.foot-links a:hover { color: var(--dim); }
+@media(max-width:600px){ #work, #services, #about, #process, #cta, footer { padding-left: 24px; padding-right: 24px; } }
+
+/* ═══════════════════════════════════════
+   REVEAL
+═══════════════════════════════════════ */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1);
+}
+.reveal.d1 { transition-delay: .1s; }
+.reveal.d2 { transition-delay: .2s; }
+.reveal.d3 { transition-delay: .3s; }
+.reveal.d4 { transition-delay: .4s; }
+.reveal.vis { opacity: 1; transform: none; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* ── Word mask reveal ── */
+.hero-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 .28em;
+  align-items: baseline;
+}
+/* each .tl clips its child */
+.tl {
+  display: inline-block;
+  overflow: hidden;
+  line-height: 1.05;
+  padding-bottom: .06em; /* prevent descender clip */
+}
+.tw {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+}
+.fire-word { color: transparent; -webkit-text-stroke: 1px rgba(240,236,228,.2); }
+/* fired by JS */
+.tw.revealed {
+  animation: wordUp .9s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes wordUp {
+  from { transform: translateY(105%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"><div id="cursor-dot"></div><div id="cursor-ring"></div></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">
+    <svg width="11" height="16" viewBox="0 0 120 180" fill="none">
+      <rect x="0" y="0" width="20" height="180" fill="#f0ece4"/>
+      <rect x="0" y="0" width="120" height="20"  fill="#f0ece4"/>
+      <rect x="0" y="72" width="90" height="17" fill="#FF4520"/>
+    </svg>
+    FABRICA
+  </div>
+  <div class="nav-links">
+    <a href="#services">Služby</a>
+    <a href="#about">O nás</a>
+    <a href="#process">Proces</a>
+    <a href="#cta">Kontakt</a>
+  </div>
+  <a href="#cta" class="nav-cta">Začnime →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+
+  <!-- Giant background F -->
+  <div class="hero-bg-mark">
+    <svg width="700" height="1050" viewBox="0 0 120 180" fill="none">
+      <rect x="0" y="0" width="20" height="180" fill="#f0ece4"/>
+      <rect x="0" y="0" width="120" height="20"  fill="#f0ece4"/>
+      <rect x="0" y="72" width="90" height="17" fill="#FF4520"/>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Marketing Creative Studio · Nitra</div>
+    <h1 class="hero-title" id="hero-title" aria-label="We make brands people remember.">
+      <span class="tl"><span class="tw">We</span></span>
+      <span class="tl"><span class="tw">make</span></span>
+      <span class="tl"><span class="tw">brands</span></span>
+      <span class="tl"><span class="tw fire-word">people</span></span>
+      <span class="tl"><span class="tw">remember.</span></span>
+    </h1>
+    <div class="hero-bottom">
+      <p class="hero-desc">
+        Tvoríme <span>identity, kampane a obsah</span>, ktorý nezapadne do šumu. Žiadne šablóny. Len remeslo.
+      </p>
+      <div class="hero-cta-row">
+        <a href="#services" class="btn-primary">Čo robíme</a>
+        <a href="#cta" class="btn-ghost">Spolupráca <span class="btn-ghost-arrow">→</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll-line">
+    <div class="scroll-text">Scroll</div>
+    <div class="scroll-track"><div class="scroll-thumb"></div></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker">
+    <div class="ticker-item"><div class="ticker-dot"></div>Brand Identity</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Social Media</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Video Production</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Content Strategy</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Web Design</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Graphic Design</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Brand Identity</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Social Media</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Video Production</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Content Strategy</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Web Design</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Graphic Design</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-head reveal">
+    <div class="sh-left">
+      <div class="sh-num">01 — Čo robíme</div>
+      <h2 class="sh-title">Komplexný<br>marketing.</h2>
+    </div>
+    <p class="sh-right">Od prvého nápadu po posledný pixel. Postaráme sa o celý obraz, nie len jeho časť.</p>
+  </div>
+
+  <div class="services-list">
+    <div class="service-row reveal">
+      <span class="srv-num">01</span>
+      <span class="srv-name">Brand Identity</span>
+      <span class="srv-tag">Logo · Vizuál · Guidelines</span>
+      <span class="srv-arrow">→</span>
+    </div>
+    <div class="service-row reveal d1">
+      <span class="srv-num">02</span>
+      <span class="srv-name">Social Media</span>
+      <span class="srv-tag">Content · Strategy · Ads</span>
+      <span class="srv-arrow">→</span>
+    </div>
+    <div class="service-row reveal d2">
+      <span class="srv-num">03</span>
+      <span class="srv-name">Video & Motion</span>
+      <span class="srv-tag">Reklama · Reels · Produkcia</span>
+      <span class="srv-arrow">→</span>
+    </div>
+    <div class="service-row reveal d3">
+      <span class="srv-num">04</span>
+      <span class="srv-name">Web Design</span>
+      <span class="srv-tag">UI · Landing page · E-shop</span>
+      <span class="srv-arrow">→</span>
+    </div>
+    <div class="service-row reveal d4">
+      <span class="srv-num">05</span>
+      <span class="srv-name">Copywriting</span>
+      <span class="srv-tag">Texty · Kampane · SEO</span>
+      <span class="srv-arrow">→</span>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-left reveal">
+      <div class="about-portrait">
+        <div class="portrait-placeholder">
+          <svg width="80" height="120" viewBox="0 0 120 180" fill="none">
+            <rect x="0" y="0" width="20" height="180" fill="white"/>
+            <rect x="0" y="0" width="120" height="20"  fill="white"/>
+            <rect x="0" y="72" width="90" height="17" fill="#FF4520"/>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <div class="about-name">Adam Fabcin</div>
+        <div class="about-role">Founder & Creative Director</div>
+      </div>
+    </div>
+    <div class="about-right">
+      <p class="about-statement reveal d1">
+        Veríme, že <strong>dobrý marketing nie je o kričaní hlasnejšie</strong> — je o hovorení <em>múdrejšie</em>. Každý projekt budujeme od základu, bez šablón, bez kompromisov.
+      </p>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-head reveal">
+    <div class="sh-left">
+      <div class="sh-num">03 — Ako pracujeme</div>
+      <h2 class="sh-title">Jednoduchý<br>proces.</h2>
+    </div>
+  </div>
+
+  <div class="process-grid">
+    <div class="process-cell reveal">
+      <div class="pc-num">01</div>
+      <div class="pc-title">Discovery</div>
+      <div class="pc-desc">Spoznáme tvoj biznis, ciele a cieľovú skupinu do hĺbky.</div>
+    </div>
+    <div class="process-cell reveal d1">
+      <div class="pc-num">02</div>
+      <div class="pc-title">Stratégia</div>
+      <div class="pc-desc">Navrhneme plán, ktorý dáva zmysel — merateľný a realistický.</div>
+    </div>
+    <div class="process-cell reveal d2">
+      <div class="pc-num">03</div>
+      <div class="pc-title">Tvorba</div>
+      <div class="pc-desc">Dizajn, texty, video — všetko pod jednou strechou.</div>
+    </div>
+    <div class="process-cell reveal d3">
+      <div class="pc-num">04</div>
+      <div class="pc-title">Launch & Rast</div>
+      <div class="pc-desc">Vypustíme, sledujeme a optimalizujeme. Bez prestania.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-glow"></div>
+  <div class="cta-inner">
+    <div class="cta-label reveal">Začnime spolu</div>
+    <h2 class="cta-title reveal d1">Máš projekt?<br><em>Porozprávajme sa.</em></h2>
+    <a href="mailto:adam@fabrica.studio" class="cta-email reveal d2">adam@fabrica.studio</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-left">
+    <svg width="10" height="15" viewBox="0 0 120 180" fill="none">
+      <rect x="0" y="0" width="20" height="180" fill="#3a3a38"/>
+      <rect x="0" y="0" width="120" height="20"  fill="#3a3a38"/>
+      <rect x="0" y="72" width="90" height="17" fill="#FF4520" opacity=".7"/>
+    </svg>
+    <span class="foot-wm">FABRICA</span>
+    <span class="foot-copy">© 2025 Adam Fabcin</span>
+  </div>
+  <div class="foot-links">
+    <a href="#">Instagram</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Behance</a>
+  </div>
+</footer>
+
+<script>
+/* ── Hero word reveal ── */
+const words = document.querySelectorAll('.tw');
+words.forEach((w, i) => {
+  setTimeout(() => w.classList.add('revealed'), 620 + i * 110);
+});
+
+/* ── Cursor ── */
+const curEl = document.getElementById('cursor');
+const dot   = document.getElementById('cursor-dot');
+const ring  = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  rx += (mx - rx) * .12; ry += (my - ry) * .12;
+  curEl.style.transform = `translate(${mx}px,${my}px)`;
+  ring.style.transform  = `translate(${rx - mx}px,${ry - my}px) translate(-50%,-50%)`;
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a,button,.service-row,.work-card,.nav-cta').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});
+
+/* ── Nav scroll ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ── Reveal ── */
+const revs = document.querySelectorAll('.reveal');
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: .12 });
+revs.forEach(el => ro.observe(el));
+
+/* ── Hero Canvas — floating dot grid ── */
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, dots = [];
+function resize() {
+  W = canvas.width  = canvas.offsetWidth;
+  H = canvas.height = canvas.offsetHeight;
+  makeDots();
+}
+function makeDots() {
+  dots = [];
+  const cols = Math.ceil(W / 80), rows = Math.ceil(H / 80);
+  for(let r = 0; r <= rows; r++) {
+    for(let c = 0; c <= cols; c++) {
+      dots.push({
+        bx: c * 80, by: r * 80,
+        x: c * 80, y: r * 80,
+        vx: (Math.random()-.5)*.25,
+        vy: (Math.random()-.5)*.25,
+        r: Math.random() > .94 ? 1.8 : .7,
+        a: Math.random() * .4 + .08,
+        fire: Math.random() > .97
+      });
+    }
+  }
+}
+let mouseX = W/2, mouseY = H/2;
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mouseX = e.clientX - r.left; mouseY = e.clientY - r.top;
+});
+
+function drawCanvas() {
+  ctx.clearRect(0, 0, W, H);
+  const t = Date.now() * .0003;
+
+  dots.forEach(d => {
+    d.x += d.vx;
+    d.y += d.vy;
+    if(d.x < -40) d.x = W + 40;
+    if(d.x > W+40) d.x = -40;
+    if(d.y < -40) d.y = H + 40;
+    if(d.y > H+40) d.y = -40;
+
+    const dx = d.x - mouseX, dy = d.y - mouseY;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const pull = Math.max(0, 1 - dist/220);
+    const px = d.x + dx * pull * .4;
+    const py = d.y + dy * pull * .4;
+
+    ctx.beginPath();
+    ctx.arc(px, py, d.r, 0, Math.PI*2);
+    ctx.fillStyle = d.fire
+      ? `rgba(255,69,32,${d.a * (.6 + .4*Math.sin(t*2 + d.bx))})`
+      : `rgba(240,236,228,${d.a * (.5 + .5*Math.sin(t + d.by * .05))})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawCanvas);
+}
+
+window.addEventListener('resize', resize);
+resize();
+drawCanvas();
+</script>
+</body>
+</html>
