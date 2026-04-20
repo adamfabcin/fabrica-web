@@ -156,10 +156,12 @@ body::after {
 /* Large background F — architectural */
 .hero-bg-mark {
   position: absolute;
-  right: -2%; top: 50%;
+  right: -5%; top: 50%;
   transform: translateY(-50%);
   z-index: 1; pointer-events: none;
   opacity: .032;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .hero-content {
@@ -178,7 +180,7 @@ body::after {
 }
 
 .hero-title {
-  font-size: clamp(52px, 9vw, 120px);
+  font-size: clamp(48px, 7vw, 88px);
   font-weight: 900;
   letter-spacing: -.02em;
   line-height: .95;
@@ -638,8 +640,8 @@ footer {
 #hero-click-zone {
   position: absolute;
   top: 0; left: 0; right: 0;
-  /* covers top 55% of hero — above the text block */
-  height: 55%;
+  /* covers top 50% of hero — above the text block */
+  height: 50%;
   z-index: 3;
   cursor: none;
 }
@@ -760,7 +762,7 @@ footer {
 
   <!-- Giant background F -->
   <div class="hero-bg-mark">
-    <svg width="700" height="1050" viewBox="0 0 120 180" fill="none">
+    <svg width="480" height="720" viewBox="0 0 120 180" fill="none">
       <rect x="0" y="0" width="20" height="180" fill="#f0ece4"/>
       <rect x="0" y="0" width="120" height="20"  fill="#f0ece4"/>
       <rect x="0" y="72" width="90" height="17" fill="#FF4520"/>
