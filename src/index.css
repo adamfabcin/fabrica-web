@@ -304,7 +304,7 @@ section { position: relative; }
 /* ═══════════════════════════════════════
    CONTACT / CTA
 ═══════════════════════════════════════ */
-#contact { text-align: center; overflow: hidden; }
+#contact { text-align: center; overflow: hidden; padding-bottom: 56px; }
 .cta-inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
 .cta-label {
   font-size: var(--label-size); font-weight: var(--fw-medium);
@@ -323,20 +323,41 @@ section { position: relative; }
 .cta-email:hover { color: var(--fire); }
 
 /* ═══════════════════════════════════════
-   FOOTER
+   CLOSING VIEW
 ═══════════════════════════════════════ */
-footer {
-  padding: 32px 48px;
-  border-top: 1px solid var(--border);
+.closing-view {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2400 / 1340;
+  overflow: hidden;
+}
+.closing-view img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.closing-view-fade {
+  position: absolute; top: 0; left: 0; right: 0; height: 22%;
+  background: linear-gradient(to bottom, var(--bg), transparent);
+}
+
+/* ═══════════════════════════════════════
+   FOOTER (overlaid on the closing image)
+═══════════════════════════════════════ */
+.closing-footer {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 28px 48px;
   display: flex; align-items: center; justify-content: space-between;
   flex-wrap: wrap; gap: 16px;
+  background: linear-gradient(to top, rgba(10,8,6,.55), transparent);
 }
 .foot-left { display: flex; align-items: center; gap: 12px; }
-.foot-wm { font-size: 13px; font-weight: var(--fw-bold); letter-spacing: .18em; color: var(--fire); }
-.foot-copy { font-size: 11px; font-weight: var(--fw-regular); color: var(--muted); letter-spacing: .04em; }
+.foot-wm { font-size: 13px; font-weight: var(--fw-bold); letter-spacing: .18em; color: #fff; }
+.foot-copy { font-size: 11px; font-weight: var(--fw-regular); color: rgba(255,255,255,.85); letter-spacing: .04em; }
 .foot-links { display: flex; gap: 24px; }
-.foot-links a { font-size: 11px; font-weight: var(--fw-regular); color: var(--muted); letter-spacing: .04em; transition: color .2s; }
-.foot-links a:hover { color: var(--ink); }
+.foot-links a { font-size: 11px; font-weight: var(--fw-regular); color: rgba(255,255,255,.85); letter-spacing: .04em; transition: color .2s; }
+.foot-links a:hover { color: #fff; }
 
 /* ═══════════════════════════════════════
    MOBILE RESPONSIVE
@@ -362,6 +383,6 @@ footer {
   .cta-title { font-size: clamp(36px, 10vw, 64px); }
   .cta-email { font-size: 14px; }
 
-  footer { padding: 24px; flex-direction: column; gap: 16px; text-align: center; }
+  .closing-footer { padding: 16px; flex-direction: column; gap: 8px; text-align: center; }
   .foot-links { justify-content: center; }
 }

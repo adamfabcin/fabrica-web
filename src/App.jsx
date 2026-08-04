@@ -9,7 +9,7 @@ import About from './components/About'
 import Process from './components/Process'
 import Clients from './components/Clients'
 import Contact from './components/Contact'
-import Footer from './components/Footer'
+import ClosingView from './components/ClosingView'
 
 const REVEAL_DWELL_MS = 3200
 
@@ -60,7 +60,7 @@ export default function App() {
       <Process />
       <Clients />
       <Contact />
-      <Footer />
+      <ClosingView />
     </div>
   )
 }
