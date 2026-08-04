@@ -1,10 +1,20 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import wordmarkPaths from '../assets/brand/wordmark-paths.json'
 
-const POS = {
-  video:  { top: '50%', left: '50%', x: '-50%', y: '-50%', width: 440, filter: 'blur(0px)' },
-  reveal: { top: '50%', left: '50%', x: '-50%', y: '-50%', width: 440, filter: 'blur(0px)' },
-  done:   { top: 34, left: 48, x: 0, y: '-50%', width: 108, filter: 'blur(0px)' },
+function usePos() {
+  const [vw, setVw] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 1280))
+  useEffect(() => {
+    const onResize = () => setVw(window.innerWidth)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+  const introWidth = Math.min(440, vw * 0.8)
+  return {
+    video:  { top: '50%', left: '50%', x: '-50%', y: '-50%', width: introWidth, filter: 'blur(0px)' },
+    reveal: { top: '50%', left: '50%', x: '-50%', y: '-50%', width: introWidth, filter: 'blur(0px)' },
+    done:   { top: 34, left: 48, x: 0, y: '-50%', width: 108, filter: 'blur(0px)' },
+  }
 }
 
 const DOCK_TRANSITION = {
@@ -29,6 +39,7 @@ function buildSlots(drawDuration) {
 }
 
 export default function BrandLogo({ stage, drawDuration = 8 }) {
+  const POS = usePos()
   const pos = POS[stage] ?? POS.video
   const filled = stage !== 'video'
   const slots = buildSlots(drawDuration)
