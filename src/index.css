@@ -44,29 +44,102 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ═══════════════════════════════════════
-   VIDEO INTRO
-═══════════════════════════════════════ */
-.video-intro {
-  position: fixed; inset: 0; z-index: 900;
-  background: #000;
-}
-.video-intro-el {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: 50% center;
-  display: block;
-}
-@media(max-width: 768px) {
-  .video-intro-el { object-position: 70% center; }
-}
-
-/* ═══════════════════════════════════════
-   BRAND LOGO (shared, floats center → nav)
+   BRAND LOGO (docked in nav)
 ═══════════════════════════════════════ */
 .brand-logo {
   position: fixed;
+  top: 34px; left: 48px;
+  width: 108px;
   z-index: 950;
   display: block;
+  transition: opacity .6s ease;
+}
+
+/* ═══════════════════════════════════════
+   SCROLL-SCRUBBED HERO INTRO
+═══════════════════════════════════════ */
+.hero-scrub {
+  position: relative;
+}
+.hero-scrub-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 1;
+  background: #0e0d0b;
+}
+.hero-scrub-video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  will-change: transform;
+  transform: translateZ(0);
+}
+.hero-static {
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-color: #0e0d0b;
+}
+.hero-load-ring {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  transition: opacity .5s ease;
+}
+.hero-load-ring svg {
+  width: 48px; height: 48px;
+  transform: rotate(-90deg);
+}
+.hero-load-ring circle {
+  fill: none;
+  stroke: #FF4520;
+  stroke-width: 3;
+  stroke-dasharray: 126;
+  stroke-dashoffset: var(--ld, 126);
+  stroke-linecap: round;
+  transition: stroke-dashoffset .15s linear;
+}
+.hero-scroll-cue {
+  position: absolute;
+  left: 50%; bottom: 48px;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: 56px; height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  animation: heroCueBounce 1.8s ease-in-out infinite;
+}
+.hero-scroll-cue::before {
+  content: '';
+  position: absolute; inset: -37px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,201,138,.55) 0%, rgba(255,150,120,.4) 38%, rgba(178,148,196,.22) 68%, transparent 82%);
+  filter: blur(20px);
+}
+.hero-scroll-cue::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,69,32,.55);
+}
+.hero-scroll-cue svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+@keyframes heroCueBounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 10px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-cue { animation: none; }
+}
+.hero-end-fade {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 40%;
+  z-index: 2; pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--bg));
 }
 
 /* ═══════════════════════════════════════
@@ -195,23 +268,6 @@ body.hovering .cursor-ring {
 }
 
 /* ═══════════════════════════════════════
-   HERO
-═══════════════════════════════════════ */
-#hero {
-  position: relative;
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
-}
-.hero-tagline {
-  position: absolute;
-  top: calc(50% + 62px);
-  left: 50%;
-  font-size: var(--label-size); font-weight: var(--fw-medium);
-  letter-spacing: var(--label-tracking); text-transform: uppercase;
-  color: var(--dim); white-space: nowrap;
-}
-
-/* ═══════════════════════════════════════
    SHARED SECTION HEAD
 ═══════════════════════════════════════ */
 section { position: relative; }
@@ -331,11 +387,11 @@ section { position: relative; }
 .clients-track-wrap::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
 .clients-track {
   display: flex; align-items: center; gap: 80px;
-  animation: clientsScroll 22s linear infinite;
+  animation: clientsScroll 18s linear infinite;
   width: max-content;
 }
 .clients-track:hover { animation-play-state: paused; }
-@media(max-width:768px){ .clients-track { animation-duration: 14s; } }
+@media(max-width:768px){ .clients-track { animation-duration: 12s; } }
 @keyframes clientsScroll {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
@@ -379,37 +435,34 @@ section { position: relative; }
 ═══════════════════════════════════════ */
 .closing-view {
   position: relative;
-  width: 100%;
-  aspect-ratio: 2400 / 1340;
-  overflow: hidden;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px 40px;
 }
-.closing-view img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
+.closing-desk {
   display: block;
-}
-.closing-view-fade {
-  position: absolute; top: 0; left: 0; right: 0; height: 22%;
-  background: linear-gradient(to bottom, var(--bg), transparent);
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  margin: 0;
 }
 
 /* ═══════════════════════════════════════
-   FOOTER (overlaid on the closing image)
+   FOOTER
 ═══════════════════════════════════════ */
 .closing-footer {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 28px 48px;
+  margin: 8px 0 0;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
   flex-wrap: wrap; gap: 16px;
-  background: linear-gradient(to top, rgba(10,8,6,.55), transparent);
 }
 .foot-left { display: flex; align-items: center; gap: 12px; }
-.foot-wm { font-size: 13px; font-weight: var(--fw-bold); letter-spacing: .18em; color: #fff; }
-.foot-copy { font-size: 11px; font-weight: var(--fw-regular); color: rgba(255,255,255,.85); letter-spacing: .04em; }
+.foot-wm { font-size: 13px; font-weight: var(--fw-bold); letter-spacing: .18em; color: var(--ink); }
+.foot-copy { font-size: 11px; font-weight: var(--fw-regular); color: var(--dim); letter-spacing: .04em; }
 .foot-links { display: flex; gap: 24px; }
-.foot-links a { font-size: 11px; font-weight: var(--fw-regular); color: rgba(255,255,255,.85); letter-spacing: .04em; transition: color .2s; }
-.foot-links a:hover { color: #fff; }
+.foot-links a { font-size: 11px; font-weight: var(--fw-regular); color: var(--dim); letter-spacing: .04em; transition: color .2s; }
+.foot-links a:hover { color: var(--fire); }
 
 /* ═══════════════════════════════════════
    MOBILE RESPONSIVE

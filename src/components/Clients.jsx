@@ -3,8 +3,10 @@ import logo1 from '../assets/clients/client-logo-1.png'
 import logo2 from '../assets/clients/client-logo-2.png'
 import logo3 from '../assets/clients/client-logo-3.png'
 import logo4 from '../assets/clients/client-logo-4.png'
+import logo5 from '../assets/clients/client-logo-5.png'
+import logo6 from '../assets/clients/client-logo-6.png'
 
-const LOGOS = [logo1, logo2, logo3, logo4]
+const LOGOS = [logo1, logo2, logo3, logo4, logo5, logo6]
 const TRACK = [...LOGOS, ...LOGOS]
 
 export default function Clients() {

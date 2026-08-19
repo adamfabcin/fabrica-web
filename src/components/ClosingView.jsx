@@ -1,10 +1,10 @@
 import Reveal from './Reveal'
+import deskImg from '../assets/closing-desk.png'
 
 export default function ClosingView() {
   return (
     <Reveal as="section" className="closing-view">
-      <img src="/closing-view.jpg" alt="Nitra, mesto v ktorom tvoríme" />
-      <div className="closing-view-fade" />
+      <img src={deskImg} alt="" className="closing-desk" />
       <footer className="closing-footer">
         <div className="foot-left">
           <span className="foot-wm">FABRICA</span>
