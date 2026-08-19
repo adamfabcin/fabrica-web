@@ -11,7 +11,7 @@ const RING_CIRCUMFERENCE = 126
 
 const ASSETS = {
   desktop: { video: heroScrub, poster: heroPoster, ending: heroEnding, bytes: 54454825 },
-  mobile: { video: heroScrubMobile, poster: heroPosterMobile, ending: heroEndingMobile, bytes: 18645814 },
+  mobile: { video: heroScrubMobile, poster: heroPosterMobile, ending: heroEndingMobile, bytes: 18728030 },
 }
 
 const STATIC_GATES = [
