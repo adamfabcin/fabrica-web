@@ -37,6 +37,8 @@ body {
   cursor: none;
 }
 @media(max-width: 768px) { body { cursor: auto; } #cursor { display: none; } }
+body.hero-scrub-active { cursor: auto; }
+body.hero-scrub-active #cursor { opacity: 0; }
 a { text-decoration: none; color: inherit; }
 
 .page {
@@ -148,6 +150,8 @@ a { text-decoration: none; color: inherit; }
 #cursor {
   position: fixed; z-index: 9999; pointer-events: none;
   top: 0; left: 0;
+  opacity: 1;
+  transition: opacity .5s ease;
   will-change: transform;
 }
 .cursor-dot {
@@ -468,8 +472,6 @@ section { position: relative; }
 .closing-footer {
   position: absolute;
   left: 0; right: 0; bottom: 24px;
-  max-width: 1100px;
-  margin: 0 auto;
   padding: 0 48px;
   z-index: 1;
   display: flex; align-items: center; justify-content: space-between;
@@ -507,7 +509,7 @@ section { position: relative; }
   .cta-email { font-size: 14px; }
 
   .closing-view { height: auto; overflow: visible; padding: 0 24px 24px; }
-  .closing-desk { position: static; width: 100%; max-width: 100%; margin: 0 0 20px; }
+  .closing-desk { display: none; }
   .closing-footer { position: static; padding: 16px; flex-direction: column; gap: 8px; text-align: center; }
   .foot-links { justify-content: center; }
 }

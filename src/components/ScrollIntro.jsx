@@ -2,18 +2,33 @@ import { useEffect, useRef, useState } from 'react'
 import heroScrub from '../assets/hero/hero-scrub.mp4'
 import heroPoster from '../assets/hero/hero-poster.jpg'
 import heroEnding from '../assets/hero/hero-ending.jpg'
+import heroScrubMobile from '../assets/hero/hero-scrub-mobile.mp4'
+import heroPosterMobile from '../assets/hero/hero-poster-mobile.jpg'
+import heroEndingMobile from '../assets/hero/hero-ending-mobile.jpg'
 
 const HERO_VH = 500
-const VIDEO_BYTES = 54454825
 const RING_CIRCUMFERENCE = 126
 
-const GATES = [
-  '(max-width: 720px)',
-  '(orientation: portrait) and (max-width: 1024px)',
-  '(orientation: portrait) and (pointer: coarse)',
+const ASSETS = {
+  desktop: { video: heroScrub, poster: heroPoster, ending: heroEnding, bytes: 54454825 },
+  mobile: { video: heroScrubMobile, poster: heroPosterMobile, ending: heroEndingMobile, bytes: 18645814 },
+}
+
+const STATIC_GATES = [
   '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
   '(prefers-reduced-motion: reduce)',
 ]
+const MOBILE_GATES = [
+  '(max-width: 720px)',
+  '(orientation: portrait) and (max-width: 1024px)',
+  '(orientation: portrait) and (pointer: coarse)',
+]
+
+function computeMode() {
+  if (STATIC_GATES.some((q) => matchMedia(q).matches)) return 'static'
+  if (MOBILE_GATES.some((q) => matchMedia(q).matches)) return 'mobile'
+  return 'desktop'
+}
 
 export default function ScrollIntro({ onDone }) {
   const sectionRef = useRef(null)
@@ -21,18 +36,20 @@ export default function ScrollIntro({ onDone }) {
   const ringRef = useRef(null)
   const cueRef = useRef(null)
   const endFadeRef = useRef(null)
-  const [staticMode, setStaticMode] = useState(false)
+  const [mode, setMode] = useState(computeMode)
 
   useEffect(() => {
-    const mqls = GATES.map((q) => matchMedia(q))
-    const check = () => setStaticMode(mqls.some((m) => m.matches))
-    check()
+    const queries = [...STATIC_GATES, ...MOBILE_GATES]
+    const mqls = queries.map((q) => matchMedia(q))
+    const check = () => setMode(computeMode())
     mqls.forEach((m) => m.addEventListener('change', check))
     return () => mqls.forEach((m) => m.removeEventListener('change', check))
   }, [])
 
+  const assets = ASSETS[mode] ?? ASSETS.desktop
+
   useEffect(() => {
-    if (staticMode) {
+    if (mode === 'static') {
       onDone(true)
       return
     }
@@ -127,6 +144,7 @@ export default function ScrollIntro({ onDone }) {
 
     const io = new IntersectionObserver(([entry]) => {
       heroOnScreen = entry.isIntersecting
+      document.body.classList.toggle('hero-scrub-active', heroOnScreen)
       if (heroOnScreen) armLoop()
     }, { threshold: 0 })
     io.observe(section)
@@ -147,8 +165,8 @@ export default function ScrollIntro({ onDone }) {
     const loadHeroBlob = async () => {
       const ctrl = new AbortController()
       let watchdog = setTimeout(() => ctrl.abort(), 20000)
-      const res = await fetch(heroScrub, { signal: ctrl.signal })
-      const total = Number(res.headers.get('Content-Length')) || VIDEO_BYTES
+      const res = await fetch(assets.video, { signal: ctrl.signal })
+      const total = Number(res.headers.get('Content-Length')) || assets.bytes
       const reader = res.body.getReader()
       const chunks = []
       let got = 0
@@ -186,24 +204,26 @@ export default function ScrollIntro({ onDone }) {
       cancelled = true
       window.removeEventListener('scroll', onScroll)
       io.disconnect()
+      document.body.classList.remove('hero-scrub-active')
       video.removeEventListener('seeked', onSeeked)
       video.removeEventListener('error', onVideoError)
       if (rafId !== null) cancelAnimationFrame(rafId)
       if (blobUrl) URL.revokeObjectURL(blobUrl)
     }
-  }, [staticMode, onDone])
+  }, [mode, assets, onDone])
 
-  if (staticMode) {
-    return <section className="hero-static" style={{ backgroundImage: `url(${heroEnding})` }} aria-hidden="true" />
+  if (mode === 'static') {
+    return <section className="hero-static" style={{ backgroundImage: `url(${assets.ending})` }} aria-hidden="true" />
   }
 
   return (
     <section ref={sectionRef} className="hero-scrub" style={{ height: `${HERO_VH}vh` }}>
       <div className="hero-scrub-stage">
         <video
+          key={mode}
           ref={videoRef}
           className="hero-scrub-video"
-          poster={heroPoster}
+          poster={assets.poster}
           muted
           playsInline
           preload="auto"
