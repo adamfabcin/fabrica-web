@@ -5,8 +5,8 @@ export default function About() {
     <section id="about" className="container">
       <div className="about-inner">
         <Reveal as="p" className="about-statement">
-          Veríme, že <strong>dobrý marketing nie je o kričaní hlasnejšie</strong> — je o hovorení{' '}
-          <em>múdrejšie</em>. Každý projekt staviame od základu, bez šablón a bez kompromisov.
+          Dobrý marketing nie je o tom, <strong>kto kričí hlasnejšie</strong>, ale o tom,{' '}
+          <em>kto hovorí múdrejšie</em>. Každý projekt staviame od základu — bez šablón, bez kompromisov.
         </Reveal>
       </div>
     </section>

@@ -6,7 +6,14 @@ import logo4 from '../assets/clients/client-logo-4.png'
 import logo5 from '../assets/clients/client-logo-5.png'
 import logo6 from '../assets/clients/client-logo-6.png'
 
-const LOGOS = [logo1, logo2, logo3, logo4, logo5, logo6]
+const LOGOS = [
+  { src: logo1, name: 'Project Optimal', href: 'https://projectoptimal.eu' },
+  { src: logo2, name: "Barny's", href: 'https://www.barnys.sk' },
+  { src: logo3, name: 'Be A Pro!', href: 'https://www.beapro.sk' },
+  { src: logo4, name: 'Beccstage', href: 'https://www.instagram.com/beccstage.show/' },
+  { src: logo5, name: 'Jahodovo', href: 'https://www.jahodovo.sk' },
+  { src: logo6, name: 'SefferStav', href: 'https://www.sefferstav.sk' },
+]
 const TRACK = [...LOGOS, ...LOGOS]
 
 export default function Clients() {
@@ -25,9 +32,16 @@ export default function Clients() {
       <Reveal className="clients-track-wrap" delay={0.1}>
         <div className="clients-track">
           {TRACK.map((logo, i) => (
-            <div className="client-logo" key={i}>
-              <img src={logo} alt="Klient" />
-            </div>
+            <a
+              className="client-logo"
+              key={i}
+              href={logo.href}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={logo.name}
+            >
+              <img src={logo.src} alt={logo.name} />
+            </a>
           ))}
         </div>
       </Reveal>

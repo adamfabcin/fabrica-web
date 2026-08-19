@@ -46,7 +46,14 @@ export default function Nav({ revealed }) {
           transition={{ duration: 0.6, delay: revealed ? 0.15 : 0 }}
           style={{ pointerEvents: revealed ? 'auto' : 'none' }}
         >
-          <a href="#contact" className="nav-cta">Začnime →</a>
+          <a href="#contact" className="nav-cta">
+            Začnime
+            <span className="cta-arrow" aria-hidden="true">
+              <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+                <path d="M1 1L7 7L1 13" stroke="#FF4520" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </a>
           <button
             type="button"
             className="nav-burger"
