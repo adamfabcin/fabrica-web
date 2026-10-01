@@ -9,7 +9,7 @@ export default function Contact() {
           Máš projekt?<br /><em>Porozprávajme sa.</em>
         </Reveal>
         <Reveal as="div" delay={0.2}>
-          <a href="mailto:adamfabcin@icloud.com" className="cta-email">adamfabcin@icloud.com</a>
+          <a href="mailto:madebyfabricastudio@gmail.com" className="cta-email">madebyfabricastudio@gmail.com</a>
         </Reveal>
       </div>
     </section>

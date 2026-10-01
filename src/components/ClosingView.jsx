@@ -8,7 +8,7 @@ export default function ClosingView() {
       <footer className="closing-footer">
         <div className="foot-left">
           <span className="foot-wm">FABRICA</span>
-          <span className="foot-copy">© 2026 Adam Fabcin</span>
+          <span className="foot-copy">© 2026 Fabrica Studio s. r. o.</span>
         </div>
         <div className="foot-links">
           <a href="https://www.instagram.com/afabcin" target="_blank" rel="noreferrer">Instagram</a>

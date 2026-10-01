@@ -450,6 +450,7 @@ section { position: relative; }
   display: inline-block;
 }
 .cta-email:hover { color: var(--fire); }
+.cta-email { max-width: 100%; overflow-wrap: anywhere; }
 
 /* ═══════════════════════════════════════
    CLOSING VIEW
